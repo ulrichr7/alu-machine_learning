@@ -1,15 +1,11 @@
 #!/usr/bin/env python3
 """
-Perform element-wise arithmetic operations on two arrays
+Module `12-bracin_the_elements`
 """
 
-import numpy as np
 
 def np_elementwise(mat1, mat2):
     """
-    Returns a tuple containing element-wise addition, subtraction,
-    multiplication, and division of mat1 and mat2
+    This function add, subtract, multiply, divide
     """
-    a = np.array(mat1)
-    b = np.array(mat2)
-    return (a + b, a - b, a * b, a / b)
+    return (mat1 + mat2, mat1 - mat2, mat1 * mat2, mat1 / mat2)
