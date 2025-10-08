@@ -1,47 +1,43 @@
 #!/usr/bin/env python3
 """
-Definiteness of a matrix
+Module for definiteness
 """
+
 import numpy as np
 
 
 def definiteness(matrix):
     """
-    Calculates the definiteness of a matrix
-
-    Parameters:
-        matrix (numpy.ndarray): square matrix (n, n)
-
-    Returns:
-        str: One of ["Positive definite", "Positive semi-definite",
-                     "Negative definite", "Negative semi-definite",
-                     "Indefinite"]
-        None if matrix is invalid or does not fit categories
+    Definiteness of a matrix.
     """
+    # Check if matrix is a numpy ndarray
     if not isinstance(matrix, np.ndarray):
         raise TypeError("matrix must be a numpy.ndarray")
 
-    # Must be square and non-empty
-    if matrix.ndim != 2 or matrix.shape[0] != matrix.shape[1] or matrix.size == 0:
+    if matrix.ndim != 2 or matrix.shape[0] != matrix.shape[1]:
         return None
 
-    # Matrix must be symmetric
     if not np.allclose(matrix, matrix.T):
         return None
 
-    # Compute eigenvalues
-    eigenvalues = np.linalg.eigvals(matrix)
+    try:
+        eigenvalues = np.linalg.eigvals(matrix)
+    except np.linalg.LinAlgError:
+        return None
 
-    # Check definiteness
-    if np.all(eigenvalues > 0):
+    pos_eig = np.sum(eigenvalues > 1e-10)
+    neg_eig = np.sum(eigenvalues < -1e-10)
+    zero_eig = np.sum(np.isclose(eigenvalues, 0, atol=1e-10))
+
+    if pos_eig == len(eigenvalues):
         return "Positive definite"
-    elif np.all(eigenvalues >= 0):
+    elif pos_eig + zero_eig == len(eigenvalues) and pos_eig > 0:
         return "Positive semi-definite"
-    elif np.all(eigenvalues < 0):
+    elif neg_eig == len(eigenvalues):
         return "Negative definite"
-    elif np.all(eigenvalues <= 0):
+    elif neg_eig + zero_eig == len(eigenvalues) and neg_eig > 0:
         return "Negative semi-definite"
-    elif np.any(eigenvalues > 0) and np.any(eigenvalues < 0):
+    elif pos_eig > 0 and neg_eig > 0:
         return "Indefinite"
     else:
         return None
